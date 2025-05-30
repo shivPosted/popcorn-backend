@@ -24,6 +24,6 @@ app.use(express.urlencoded({ extended: true, limit: "24kb" }));
 
 import userRouter from "./routes/user.route.js";
 
-app.use("/api/v1/popcorn/user", userRouter); //NOTE: tranfering controll to userRouter
+app.use("/api/v1/popcorn/users", userRouter); //NOTE: tranfering controll to userRouter
 
 export default app;
