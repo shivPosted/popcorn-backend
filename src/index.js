@@ -1,12 +1,10 @@
+import "dotenv/config.js";
+
 import app from "./app.js";
-console.log("Inside the index");
+import dbConnect from "./db/database.js";
 
-app.get("/", (req, res) => {
-  return res.json("Hello from server");
-});
+const port = process.env.PORT;
 
-const port = 8000;
-
-app.listen(8000, (req, res) => {
-  console.log(`Server listening on port ${port}`);
-});
+dbConnect()
+  .then(() => app.listen(port, () => console.log(`listening on port ${port}`)))
+  .catch((err) => console.error(err.message));
