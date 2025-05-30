@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const dbURI = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_NAME;
-console.log(dbURI, dbName);
 
 async function dbConnect() {
   try {
@@ -10,9 +9,7 @@ async function dbConnect() {
       console.log("connection to database succesfull");
     });
 
-    const dbInstance = await mongoose.connect(`${dbURI}/${dbName}`);
-    console.log(dbInstance.connections);
-    return dbInstance;
+    await mongoose.connect(`${dbURI}/${dbName}`);
   } catch (error) {
     console.error(error.message);
   }
