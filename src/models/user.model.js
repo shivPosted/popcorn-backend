@@ -2,6 +2,20 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+const avatarSchema = new Schema(
+  {
+    url: {
+      type: String,
+    },
+    publicId: {
+      type: String,
+    },
+  },
+  {
+    _id: false,
+  },
+);
+
 const userSchema = new Schema(
   {
     fullName: {
@@ -14,6 +28,7 @@ const userSchema = new Schema(
       required: true,
       unique: true,
       index: true, //for matching
+      lowercase: true,
     },
     email: {
       type: String,
@@ -26,19 +41,20 @@ const userSchema = new Schema(
       required: [true, "password is required"],
     },
     avatar: {
-      type: String,
-      required: true,
+      type: avatarSchema,
+      requried: true,
     },
   },
   { timestamps: true },
 );
 
-const User = mongoose.model("User", userSchema);
-
-userSchema.pre("save", async function () {
+userSchema.pre("save", async function (next) {
   try {
-    if (!this.isModified("password")) return null;
+    if (!this.isModified("password")) return next();
+
+    console.log("encrypting");
     this.password = await bcrypt.hash(this.password, 10);
+    next();
   } catch (error) {
     console.error(error.message);
   }
@@ -73,5 +89,7 @@ userSchema.methods.generateRefreshToken = function () {
     },
   );
 };
+
+const User = mongoose.model("User", userSchema);
 
 export default User;
