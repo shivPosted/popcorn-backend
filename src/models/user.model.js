@@ -44,7 +44,11 @@ const userSchema = new Schema(
       type: avatarSchema,
       requried: true,
     },
+    refreshToken: {
+      type: String,
+    },
   },
+
   { timestamps: true },
 );
 
@@ -52,7 +56,6 @@ userSchema.pre("save", async function (next) {
   try {
     if (!this.isModified("password")) return next();
 
-    console.log("encrypting");
     this.password = await bcrypt.hash(this.password, 10);
     next();
   } catch (error) {
