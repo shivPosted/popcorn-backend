@@ -123,4 +123,42 @@ const loginUser = asyncHandler(async (req, res) => {
   return res.status(200).json(new Apiresponse("logged in succesfull"));
 });
 
+const refreshAccessToken = asyncHandler(async (req, res) => {
+  if (!req.user)
+    throw new ApiError(400, "No user found please log in again to continue");
+
+  const recievedToken =
+    req.cookies?.refreshToken ||
+    req.header("Authorization")?.split(" ")?.[1] ||
+    req.body?.refreshToken;
+
+  if (!recievedToken)
+    throw new ApiError(404, "Refresh token expired please log in again");
+
+  const user = await User.findById(req.user?._id).select("-password");
+
+  if (!user)
+    throw new ApiError(
+      404,
+      "No user found, or access token expired please log in again",
+    );
+
+  const isUserValid = bcrypt.compare(recievedToken, user.refreshToken);
+
+  if (!isUserValid) throw new ApiError(404, "User not found");
+
+  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+    user._id,
+  );
+
+  if (!accessToken)
+    throw new ApiError(500, "Can not generate jwt, internal server error");
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, cookieOptions)
+    .cookie("refreshToken", refreshToken, cookieOptions)
+    .json(new Apiresponse("Access token succesully refreshed", 201));
+});
+
 export { registerUser, loginUser };
