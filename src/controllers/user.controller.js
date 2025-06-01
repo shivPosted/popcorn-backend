@@ -123,6 +123,23 @@ const loginUser = asyncHandler(async (req, res) => {
   return res.status(200).json(new Apiresponse("logged in succesfull"));
 });
 
+const logoutUser = asyncHandler(async (req, res) => {
+  if (!req.user)
+    throw new ApiError(404, "User already logged out or wrong request");
+
+  await User.findOneAndUpdate(req.user?._id, {
+    $set: {
+      refreshToken: null,
+    },
+  });
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", cookieOptions)
+    .clearCookie("refreshToken", cookieOptions)
+    .json(new Apiresponse("User logged out successfully", 200));
+});
+
 const refreshAccessToken = asyncHandler(async (req, res) => {
   if (!req.user)
     throw new ApiError(400, "No user found please log in again to continue");
@@ -161,4 +178,4 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     .json(new Apiresponse("Access token succesully refreshed", 201));
 });
 
-export { registerUser, loginUser };
+export { registerUser, loginUser, refreshAccessToken, logoutUser };
