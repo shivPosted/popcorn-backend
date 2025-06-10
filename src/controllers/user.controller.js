@@ -49,12 +49,17 @@ const registerUser = asyncHandler(async (req, res) => {
   if (userExists)
     throw new ApiError(400, "User already exists enter unique user info");
 
-  const localAvatarPath = req.file?.path;
+  // NOTE: for uploading from local path
+  // const localAvatarPath = req.file?.path;
+  // if (!localAvatarPath) throw new ApiError(400, "Avatar file is required");
+  // const avatar = await uploadOnCloudinary(localAvatarPath);
 
-  if (!localAvatarPath) throw new ApiError(400, "Avatar file is required");
+  //NOTE: for uploading from buffer
+  const avatarBuffer = req.files?.avatar?.[0].buffer;
 
-  const avatar = await uploadOnCloudinary(localAvatarPath);
+  if (!avatarBuffer) throw new ApiError(404, "Avatar file is not found");
 
+  const avatar = await uploadOnCloudinary(avatarBuffer);
   if (!avatar) throw new ApiError(500, "Could not upload to cloudinary");
 
   const avatarObj = {

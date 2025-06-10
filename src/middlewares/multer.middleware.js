@@ -1,16 +1,23 @@
 import multer from "multer";
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./public/temp");
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+// NOTE: for disk storage
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "./public/temp");
+//   },
+//   filename: function (req, file, cb) {
+//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+//
+//     cb(null, file.originalname + "-" + uniqueSuffix);
+//   },
+// });
 
-    cb(null, file.originalname + "-" + uniqueSuffix);
-  },
-});
+// export const upload = multer({
+//   storage,
+// });
 
+//NOTE: for memory storage 🥲 because only free plan for render
+const storage = multer.memoryStorage();
 export const upload = multer({
   storage,
 });
