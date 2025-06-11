@@ -8,6 +8,7 @@ import bcrypt from "bcrypt";
 const cookieOptions = {
   httpOnly: true,
   secure: true,
+  maxAge: 3 * 24 * 60 * 60 * 1000, //for persisting cookies in browser for 3 days
 };
 
 const generateAccessAndRefreshToken = async function (userId) {
@@ -81,12 +82,20 @@ const registerUser = asyncHandler(async (req, res) => {
     "-password -refreshToken",
   );
 
-  return res.status(201).json(
-    new Apiresponse("User created successfully", 201, {
-      ...createdUser.toObject(),
-      avatar: createdUser.avatar.url,
-    }),
-  );
+  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+    createdUser._id,
+  ); //logging in user at succesfull creation
+
+  return res
+    .status(201)
+    .cookie("accessToken", accessToken, cookieOptions)
+    .cookie("refreshToken", refreshToken, cookieOptions)
+    .json(
+      new Apiresponse("User created and logged in successfully", 201, {
+        ...createdUser.toObject(), //toObject() is an inbuilt mogodb method that helps you to create object with only relevant info
+        avatar: createdUser.avatar.url,
+      }),
+    );
 });
 
 const loginUser = asyncHandler(async (req, res) => {
