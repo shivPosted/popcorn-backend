@@ -192,4 +192,24 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     .json(new Apiresponse("Access token succesully refreshed", 201));
 });
 
-export { registerUser, loginUser, refreshAccessToken, logoutUser };
+const getUserProfile = asyncHandler(async (req, res) => {
+  if (!req.user)
+    throw new ApiError(404, "Authentication failed please log in again");
+
+  const user = await User.findById(req.user?._id).select(
+    "-password -refreshToken",
+  );
+  if (!user) throw new ApiError(404, "Invalid user, log in again");
+
+  return res
+    .status(200)
+    .json(new Apiresponse("User profile fetched", 200, user));
+});
+
+export {
+  registerUser,
+  loginUser,
+  refreshAccessToken,
+  logoutUser,
+  getUserProfile,
+};
