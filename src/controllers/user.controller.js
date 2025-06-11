@@ -201,9 +201,11 @@ const getUserProfile = asyncHandler(async (req, res) => {
   );
   if (!user) throw new ApiError(404, "Invalid user, log in again");
 
-  return res
-    .status(200)
-    .json(new Apiresponse("User profile fetched", 200, user));
+  return res.status(200).json(
+    new Apiresponse("User profile fetched", 200, {
+      ...user.toObject(),
+    }),
+  );
 });
 
 export {
