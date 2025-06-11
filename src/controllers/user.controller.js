@@ -7,7 +7,8 @@ import bcrypt from "bcrypt";
 
 const cookieOptions = {
   httpOnly: true,
-  secure: true,
+  secure: process.env.NODE_ENV === "production", // ✅ true only in production
+  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
   maxAge: 3 * 24 * 60 * 60 * 1000, //for persisting cookies in browser for 3 days
 };
 
