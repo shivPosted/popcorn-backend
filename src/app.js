@@ -4,10 +4,21 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
+const whiteList = [
+  "http://localhost:5173",
+  "https://usepopcorn-shiv.netlify.app/",
+];
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true,
+    origin: function (origin, callback) {
+      if (!origin || whiteList.includes(origin)) {
+        // Allow requests with no origin (like mobile apps, curl, Postman) or whitelisted origins
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, //allow cookies
   }),
 );
 
