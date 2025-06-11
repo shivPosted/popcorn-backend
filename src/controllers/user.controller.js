@@ -160,7 +160,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
   const recievedToken =
     req.cookies?.refreshToken ||
-    req.header("Authorization")?.split(" ")?.[1] ||
+    req.headers["Authorization"]?.split(" ")?.[1] ||
     req.body?.refreshToken;
 
   if (!recievedToken)

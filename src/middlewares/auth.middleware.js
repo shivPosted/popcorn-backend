@@ -7,7 +7,7 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
   try {
     const recievedToken =
       req.cookies?.accessToken ||
-      req.headers("Authorization")?.split(" ")?.[1] ||
+      req.headers["Authorization"]?.split(" ")?.[1] ||
       null;
 
     if (!recievedToken)
