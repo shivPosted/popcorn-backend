@@ -6,7 +6,7 @@ const app = express();
 
 const whiteList = [
   "http://localhost:5173",
-  "https://usepopcorn-shiv.netlify.app/",
+  "https://usepopcorn-shiv.netlify.app",
 ];
 app.use(
   cors({
