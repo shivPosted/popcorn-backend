@@ -114,7 +114,7 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!user) throw new ApiError(404, "User not found");
 
   const isUserAuthenticated = await user.isPasswordCorrect(password);
-  if (!isUserAuthenticated) return new ApiError(404, "Wrong login credentials");
+  if (!isUserAuthenticated) throw new ApiError(404, "Wrong login credentials");
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
     user._id,
@@ -205,6 +205,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
   return res.status(200).json(
     new Apiresponse("User profile fetched", 200, {
       ...user.toObject(),
+      avatar: user.avatar.url,
     }),
   );
 });
