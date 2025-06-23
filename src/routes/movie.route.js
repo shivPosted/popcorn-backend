@@ -1,6 +1,6 @@
 import { Router } from "express";
-import verifyJWT from "../middlewares/auth.middleware";
-import { addUserMovie } from "../controllers/movie.controller";
+import verifyJWT from "../middlewares/auth.middleware.js";
+import { addUserMovie } from "../controllers/movie.controller.js";
 
 const movieRouter = Router();
 

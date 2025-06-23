@@ -1,11 +1,11 @@
-import Movie from "../models/movies.model";
-import Rating from "../models/ratings.model";
-import ApiError from "../util/ApiError";
-import Apiresponse from "../util/ApiResponse";
-import asyncHandler from "../util/asyncHandler";
+import Movie from "../models/movies.model.js";
+import Rating from "../models/ratings.model.js";
+import ApiError from "../util/ApiError.js";
+import Apiresponse from "../util/ApiResponse.js";
+import asyncHandler from "../util/asyncHandler.js";
 
 const addUserMovie = asyncHandler(async (req, res) => {
-  const { title, poster, imdbId, userRating, imdbRating } = req.body;
+  const { title, poster, imdbId, userRating, imdbRating, runtime } = req.body;
 
   //add the movie data if not already in all movie collection
   //update the rating model with the user rating , movieId, userId
@@ -23,7 +23,7 @@ const addUserMovie = asyncHandler(async (req, res) => {
 
   const movie = await Movie.findOne({ imdbId });
 
-  if (!movie)
+  if (!movie) {
     createdMovie = await Movie.create([
       {
         title,
@@ -32,20 +32,33 @@ const addUserMovie = asyncHandler(async (req, res) => {
         imdbRating,
       },
     ]);
-  if (!createdMovie) throw new ApiError(500, "Can not add that movie");
+
+    if (!createdMovie) throw new ApiError(500, "Can not add that movie");
+  }
 
   const ratingExists = await Rating.findOne({
-    userId: req.user?._id,
-    movieId: createdMovie._id,
+    $and: [
+      {
+        userId: req.user?._id,
+      },
+      {
+        movieId: movie ? movie._id : createdMovie[0]?._id,
+      },
+    ],
   });
+
   if (!ratingExists)
     newWatchedMovie = await Rating.create([
       {
         userId: req.user._id,
-        movieId: createdMovie._id,
+        movieId: movie ? movie._id : createdMovie[0]?._id,
         userRating,
       },
     ]);
+  if (ratingExists)
+    return res
+      .status(200)
+      .json(new Apiresponse("Movie alredy in watchlist", 200, { movie }));
 
   return res
     .status(201)
