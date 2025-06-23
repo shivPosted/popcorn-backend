@@ -35,8 +35,10 @@ app.use(express.urlencoded({ extended: true, limit: "24kb" }));
 app.use(express.static("public"));
 
 import userRouter from "./routes/user.route.js";
+import movieRouter from "./routes/movie.route.js";
 
 app.use("/api/v1/popcorn/users", userRouter); //NOTE: tranfering controll to userRouter
+app.use("/api/v1/popcorn/movies", movieRouter);
 
 //NOTE: for handling errors for the frontend
 app.use((err, req, res, next) => {

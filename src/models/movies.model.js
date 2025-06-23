@@ -19,10 +19,6 @@ const movieSchema = new Schema(
       requried: true,
       unique: true,
     },
-    userRating: {
-      type: Number,
-      requried: true,
-    },
     poster: {
       type: String,
       required: true,
