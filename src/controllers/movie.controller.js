@@ -65,4 +65,32 @@ const addUserMovie = asyncHandler(async (req, res) => {
     .json(new Apiresponse("Movie added successfully", 201, newWatchedMovie));
 });
 
-export { addUserMovie };
+const getMovies = asyncHandler(async (req, res) => {
+  if (!req.user) throw new ApiError(404, "No user found please log in");
+
+  const ratingList = await Rating.find({
+    userId: req.user._id,
+  }).populate("movieId");
+
+  if (!ratingList)
+    return res.status(200).json(new Apiresponse("Empty List", 200, []));
+
+  const movieList = ratingList?.map((item) => {
+    return {
+      title: item.movieId.title,
+      poster: item.movieId.poster,
+      imdbId: item.movieId.imdbId,
+      imdbRating: item.movieId.imdbRating,
+      userRating: item.userRating,
+    };
+  });
+
+  if (!movieList)
+    return res.status(200).json(new Apiresponse("Empty List", 200, []));
+
+  return res
+    .status(200)
+    .json(new Apiresponse("Fetched user movie list", 200, movieList));
+});
+
+export { addUserMovie, getMovies };
