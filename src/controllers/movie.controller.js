@@ -30,6 +30,7 @@ const addUserMovie = asyncHandler(async (req, res) => {
         poster,
         imdbId,
         imdbRating,
+        runtime,
       },
     ]);
 
@@ -72,7 +73,7 @@ const getMovies = asyncHandler(async (req, res) => {
     userId: req.user._id,
   }).populate("movieId");
 
-  if (!ratingList)
+  if (ratingList.length === 0)
     return res.status(200).json(new Apiresponse("Empty List", 200, []));
 
   const movieList = ratingList?.map((item) => {
@@ -84,9 +85,6 @@ const getMovies = asyncHandler(async (req, res) => {
       userRating: item.userRating,
     };
   });
-
-  if (!movieList)
-    return res.status(200).json(new Apiresponse("Empty List", 200, []));
 
   return res
     .status(200)
