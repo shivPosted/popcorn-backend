@@ -56,6 +56,7 @@ const addUserMovie = asyncHandler(async (req, res) => {
         userRating,
       },
     ]);
+
   if (ratingExists)
     return res
       .status(200)
@@ -85,6 +86,7 @@ const getMovies = asyncHandler(async (req, res) => {
       imdbId: item.movieId.imdbId,
       imdbRating: item.movieId.imdbRating,
       userRating: item.userRating,
+      runtime: item.runtime,
     };
   });
 
