@@ -63,7 +63,9 @@ const addUserMovie = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new Apiresponse("Movie added successfully", 201, newWatchedMovie));
+    .json(
+      new Apiresponse("Movie added successfully", 201, movie || createdMovie),
+    );
 });
 
 const getMovies = asyncHandler(async (req, res) => {
@@ -91,4 +93,28 @@ const getMovies = asyncHandler(async (req, res) => {
     .json(new Apiresponse("Fetched user movie list", 200, movieList));
 });
 
-export { addUserMovie, getMovies };
+const deleteUserMovie = asyncHandler(async (req, res) => {
+  console.log("inside delete movie");
+  if (!req.user)
+    throw new ApiError(404, "You are not authorized to perform that action");
+  const { imdbId } = req.query;
+
+  const movieObjectId = await Movie.findOne({
+    imdbId,
+  }).select("_id");
+
+  const movieToDelte = await Rating.deleteOne({
+    movieId: movieObjectId,
+    userId: req.user?._id,
+  });
+  if (!movieToDelte)
+    return res
+      .status(200)
+      .json(new Apiresponse("Movie already delted or does not exist"));
+
+  return res
+    .status(200)
+    .json(new Apiresponse("Movie delted successfully", 200, movieToDelte));
+});
+
+export { addUserMovie, getMovies, deleteUserMovie };
