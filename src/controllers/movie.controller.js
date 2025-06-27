@@ -85,8 +85,8 @@ const getMovies = asyncHandler(async (req, res) => {
       poster: item.movieId.poster,
       imdbId: item.movieId.imdbId,
       imdbRating: item.movieId.imdbRating,
-      userRating: item.userRating,
-      runtime: item.runtime,
+      runtime: item.movieId.runtime,
+      userRating: item.userRating, //it is already present in the rating collection
     };
   });
 
